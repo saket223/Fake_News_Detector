@@ -1,8 +1,12 @@
+import os
 from flask import Flask, render_template, request, jsonify
 import joblib  # for loading your trained model
 import re
+import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
+
+nltk.download('stopwords')
 
 # Initialize the stemmer
 port_stem = PorterStemmer()
@@ -44,5 +48,6 @@ def predict():
     return jsonify({'prediction': result})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.getenv("PORT", 8080))  # Render will set the PORT environment variable
+    app.run(host="0.0.0.0", port=port, debug=True)
 
