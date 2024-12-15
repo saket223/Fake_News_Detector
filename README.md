@@ -21,9 +21,8 @@ Before running the application, ensure you have the following dependencies insta
 
 You can install the required packages using pip
 
-The dataset can be extracted from the compressed fake_or_real_news.csv file.
-
 After performing all the prerequisites run these command in the terminal:
+
 - python model.py
 - python app.py
 - Now go the the link that will be displayed in the terminal and there you go!!

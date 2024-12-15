@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News Classifier</title>
+
+    <!-- Materialize CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+
+    <style>
+      body {
+        background-color: lightblue;
+        font-family: Arial, sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      #news-form {
+        margin: 0 auto;
+        width: 50%;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+      }
+
+      #content {
+        width: 100%;
+        min-height: 50px;
+        resize: none;
+      }
+
+      #result {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 20px;
+        width: 50%;
+        margin: 20px auto;
+      }
+
+      .container {
+        margin-top: 30px;
+      }
+
+      /* Styles for fake and real prediction */
+      .real {
+        color: green;
+      }
+
+      .fake {
+        color: red;
+      }
+
+      /* Small size for the result bar */
+      #result {
+        font-size: 18px;
+        padding: 10px;
+        width: 40%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>News Classifier</h1>
+
+      <!-- Form for input -->
+      <form id="news-form" class="col s12">
+        <div class="input-field">
+          <textarea
+            id="content"
+            class="materialize-textarea"
+            placeholder="Enter news content here"
+            oninput="resizeTextarea()"
+          ></textarea>
+        </div>
+        <button type="submit" class="btn waves-effect waves-light">
+          Classify
+        </button>
+      </form>
+
+      <!-- Display result -->
+      <div id="result" class="card">
+        <h5 class="center-align">Classification Result</h5>
+        <p id="prediction" class="center-align"></p>
+        <div id="classificationResult" class="center-align"></div>
+      </div>
+    </div>
+
+    <script>
+      // Function to automatically resize the textarea based on content
+      function resizeTextarea() {
+        var textarea = document.getElementById("content");
+        textarea.style.height = "auto"; // Reset height before recalculating
+        textarea.style.height = textarea.scrollHeight + "px";
+      }
+
+      // Form submit event listener
+      document
+        .getElementById("news-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          var content = document.getElementById("content").value;
+
+          // Send the content to the server for prediction
+          fetch("/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ content: content }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Show prediction
+              document.getElementById("prediction").textContent =
+                data.prediction;
+              document.getElementById("result").style.display = "block";
+
+              // Display the classification result with color
+              var classificationResult = document.getElementById(
+                "classificationResult"
+              );
+              classificationResult.textContent =
+                data.prediction === "Fake"
+                  ? "The news is Fake!"
+                  : "The news is Real!";
+
+              // Apply proper color classes
+              if (data.prediction === "Fake") {
+                classificationResult.classList.add("fake");
+                classificationResult.classList.remove("real");
+              } else if (data.prediction === "Real") {
+                classificationResult.classList.add("real");
+                classificationResult.classList.remove("fake");
+              }
+            });
+        });
+    </script>
+  </body>
+</html>

@@ -108,8 +108,3 @@ plt.show()
 import joblib
 joblib.dump(clf_dt, 'model.pkl')
 joblib.dump(vectorizer, 'vectorizer.pkl')
-
-
-
-
-
